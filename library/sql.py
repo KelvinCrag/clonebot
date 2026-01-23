@@ -22,7 +22,7 @@ def start() -> scoped_session:
 
 
 BASE = declarative_base()
-SESSION = start()
+
 INSERTION_LOCK = threading.RLock()
 
 
@@ -59,7 +59,7 @@ class Clonebot(BASE):
         self.last_msg_id = last_msg_id
 
 
-Clonebot.__table__.create(checkfirst=True)
+SESSION = start()
 
 
 async def add_user(id):

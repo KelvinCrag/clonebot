@@ -174,7 +174,6 @@ async def clone(client: Bot, cb: CallbackQuery):
         await cb.answer(Presets.NOT_CONFIGURED, True)
         return
     else:
-    else:
         if id in clone_cancel_key:
             await cb.answer("Process already running!", True)
             return

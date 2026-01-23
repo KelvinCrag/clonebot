@@ -126,7 +126,7 @@ async def force_reply_msg(client: Bot, message: Message):
         await message.delete()
         await source_cnf_db(id, chat_id)
         await del_from_to_ids(id)
-        clone_btn_count[id] = id
+        await del_from_to_ids(id)
         await bot_msg.edit(Presets.SOURCE_CNF.format(
             chat_status.title,
             chat_id,

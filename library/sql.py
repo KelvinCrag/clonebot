@@ -6,7 +6,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, scoped_session
 
 clone_cancel_key = {}       # Clone cancel status key
-clone_btn_count = {}        # Clone button single click actuator key
+clone_cancel_key = {}       # Clone cancel status key
 index_skip_key = {}         # Skip indexing function key
 purge_skip_key = {}         # Purge function key
 

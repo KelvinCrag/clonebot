@@ -93,6 +93,8 @@ async def clone_medias(bot: Bot, m: Message):
                     await msg.edit(Presets.CANCELLED_MSG, reply_markup=reply_markup_finished)
                     await bot.USER.send_message("me", report, disable_web_page_preview=True)
                     await set_to_defaults(id)
+                    await set_to_defaults(id)
+                    clone_cancel_key.pop(id, None)
                     return
                 else:
                     pass
@@ -167,6 +169,9 @@ async def clone_medias(bot: Bot, m: Message):
                                 await set_to_defaults(id)
                                 if not int(total_copied):
                                     await m.delete()
+                                if not int(total_copied):
+                                    await m.delete()
+                                clone_cancel_key.pop(id, None)
                                 return
                             try:
                                 await msg.edit("🇮🇳 | " + progress if pct <= 100 else Presets.BLOCK,
@@ -181,6 +186,8 @@ async def clone_medias(bot: Bot, m: Message):
                                 await msg.edit(Presets.FINISHED_TEXT, reply_markup=reply_markup_finished)
                                 await bot.USER.send_message("me", report, disable_web_page_preview=True)
                                 await set_to_defaults(id)
+                                await set_to_defaults(id)
+                                clone_cancel_key.pop(id, None)
                                 return
                             else:
                                 pass
@@ -197,3 +204,4 @@ async def clone_medias(bot: Bot, m: Message):
     await msg.edit(Presets.FINISHED_TEXT, reply_markup=reply_markup_finished)
     await bot.USER.send_message("me", report, disable_web_page_preview=True)
     await set_to_defaults(id)
+    clone_cancel_key.pop(id, None)

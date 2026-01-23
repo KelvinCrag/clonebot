@@ -179,8 +179,8 @@ async def clone(client: Bot, cb: CallbackQuery):
             return
         try:
             await index_target_chat(client, cb.message)
-        except Exception:
-            pass
+        except Exception as e:
+            await cb.answer(f"Error: {e}", True)
 
 
 @Client.on_callback_query(filters.regex(r'^index_skip_btn$'))

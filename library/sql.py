@@ -9,6 +9,7 @@ clone_cancel_key = {}       # Clone cancel status key
 clone_cancel_key = {}       # Clone cancel status key
 index_skip_key = {}         # Skip indexing function key
 purge_skip_key = {}         # Purge function key
+clone_pause_key = {}        # Clone pause status key
 
 custom_caption = {}         # Custom caption key
 master_index = []           # Unique id index of cloning medias (including target chat)

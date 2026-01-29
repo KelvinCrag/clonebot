@@ -12,6 +12,7 @@ from library.chat_support import del_user_cfg
 from plugins.cb_input import update_type_buttons
 from plugins.commands import reply_markup_home
 from plugins.index_files import index_target_chat, purge_media
+from library.buttons import reply_markup_stop, reply_markup_resume
 
 @Client.on_callback_query(filters.regex(r'^start_btn$'))
 async def start_settings(client: Bot, cb: CallbackQuery):
@@ -161,6 +162,34 @@ async def stop_process(client: Bot, cb: CallbackQuery):
     except Exception:
         pass
     await cb.answer(Presets.CLONE_REPORT_INFO, True)
+
+
+@Client.on_callback_query(filters.regex(r'^pause_clone$'))
+async def pause_process(client: Bot, cb: CallbackQuery):
+    id = int(cb.from_user.id)
+    if id not in clone_pause_key:
+        clone_pause_key[id] = id
+        try:
+            await cb.message.edit_reply_markup(reply_markup=reply_markup_resume)
+        except Exception:
+            pass
+        await cb.answer("Process Paused ⏸", True)
+    else:
+        await cb.answer("Already Paused!", True)
+
+
+@Client.on_callback_query(filters.regex(r'^resume_clone$'))
+async def resume_process(client: Bot, cb: CallbackQuery):
+    id = int(cb.from_user.id)
+    if id in clone_pause_key:
+        clone_pause_key.pop(id)
+        try:
+            await cb.message.edit_reply_markup(reply_markup=reply_markup_stop)
+        except Exception:
+            pass
+        await cb.answer("Process Resumed ▶️", True)
+    else:
+        await cb.answer("Not Paused!", True)
 
 
 # Call back function for clone: Random button clicks avoided

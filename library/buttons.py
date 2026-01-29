@@ -61,7 +61,16 @@ types_button = [
 
 stop_button = [
     [
-        InlineKeyboardButton("🚫 STOP 🚫", "stop_clone")
+        InlineKeyboardButton("🚫 STOP 🚫", "stop_clone"),
+        InlineKeyboardButton("⏸ PAUSE ⏸", "pause_clone")
+    ]
+]
+
+
+resume_button = [
+    [
+        InlineKeyboardButton("🚫 STOP 🚫", "stop_clone"),
+        InlineKeyboardButton("▶️ RESUME ▶️", "resume_clone")
     ]
 ]
 
@@ -142,5 +151,7 @@ reply_markup_finished = InlineKeyboardMarkup(finished_button)
 reply_markup_types_button = InlineKeyboardMarkup(types_button)
 
 reply_markup_close = InlineKeyboardMarkup(close_button)
+
+reply_markup_resume = InlineKeyboardMarkup(resume_button)
 
 reply_markup_cap_cnf = InlineKeyboardMarkup(caption_cnf_button)

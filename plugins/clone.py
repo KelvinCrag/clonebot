@@ -64,6 +64,19 @@ async def clone_medias(bot: Bot, m: Message):
         else:
             ep = end_id
         #
+        # Validate/Warm-up Peer Cache
+        # This prevents "ValueError: Peer id invalid" by refreshing the dialog list if a chat is unknown
+        for chat_to_resolve in [source_chat, target_chat]:
+            if not chat_to_resolve:
+                continue
+            try:
+                await bot.USER.get_chat(chat_to_resolve)
+            except Exception:
+                # If get_chat fails, iterate dialogs to refresh Pyrogram's internal peer cache
+                async for dialog in bot.USER.get_dialogs():
+                    if dialog.chat.id == chat_to_resolve:
+                        break
+        #
         await m.edit_text(Presets.INITIAL_MESSAGE_TEXT)
         await asyncio.sleep(1)
         msg = await m.reply_text(Presets.WAIT_MSG, reply_markup=reply_markup_stop)

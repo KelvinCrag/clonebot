@@ -125,7 +125,10 @@ async def view_file_types(client: Bot, cb: CallbackQuery):
 @Client.on_callback_query(filters.regex(r'^terminate_btn$'))
 async def terminate_bot(client: Bot, cb: CallbackQuery):
     await cb.answer(Presets.TERMINATED_MSG, True)
-    await cb.message.delete()
+    try:
+        await cb.message.delete()
+    except Exception:
+        pass
     sys.exit()
 
 
@@ -140,7 +143,10 @@ async def clear_button(client: Bot, cb: CallbackQuery):
 
 @Client.on_callback_query(filters.regex(r'^close_btn$'))
 async def close(client: Bot, cb: CallbackQuery):
-    await cb.message.delete()
+    try:
+        await cb.message.delete()
+    except Exception:
+        pass
 
 
 @Client.on_callback_query(filters.regex(r'^rst_btn$'))
@@ -245,7 +251,10 @@ async def restart_bot(client: Bot, cb: CallbackQuery):
     session = await client.USER.get_me()
     if cb.from_user.id == int(session.id):
         await cb.answer(Presets.RESTART_MSG, True)
-        await cb.message.delete()
+        try:
+            await cb.message.delete()
+        except Exception:
+            pass
         os.execl(sys.executable, sys.executable, *sys.argv)
     else:
         await cb.answer(Presets.RESTART_MSG_ERROR, True)
@@ -268,10 +277,22 @@ async def caption_yes_button(client: Bot, cb: CallbackQuery):
     if caption_text:
         custom_caption[id] = caption_text
         await cb.answer(Presets.CUSTOM_CAPTION_CNF, True)
-        await cb.message.reply_to_message.delete()
-        await cb.message.delete()
+        try:
+            await cb.message.reply_to_message.delete()
+        except Exception:
+            pass
+        try:
+            await cb.message.delete()
+        except Exception:
+            pass
 
 @Client.on_callback_query(filters.regex(r'^capt_cnf_no_btn$'))
 async def caption_no_button(client: Bot, cb: CallbackQuery):
-    await cb.message.reply_to_message.delete()
-    await cb.message.delete()
+    try:
+        await cb.message.reply_to_message.delete()
+    except Exception:
+        pass
+    try:
+        await cb.message.delete()
+    except Exception:
+        pass

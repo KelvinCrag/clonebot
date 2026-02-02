@@ -23,6 +23,15 @@ async def index_target_chat(client: Bot, message: Message):
     init_msg_id = last_msg_id = int()
     index_skip_key[id] = int(message.id)
     #
+    # Validate/Warm-up Peer Cache for Target Chat
+    if target_chat:
+        try:
+            await client.USER.get_chat(target_chat)
+        except Exception:
+            async for dialog in client.USER.get_dialogs():
+                if dialog.chat.id == target_chat:
+                    break
+    #
     target_id = str(target_chat).split("-100")[1]
     cfg_file = os.getcwd() + "/" + "cfg" + "/" + str(id) + "/" + str(target_id) + ".csv"
     if os.path.isfile(cfg_file):

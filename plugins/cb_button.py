@@ -38,6 +38,9 @@ async def start_settings(client: Bot, cb: CallbackQuery):
 async def view_chat_config(client: Bot, cb: CallbackQuery):
     id = int(cb.from_user.id)
     query = await query_msg(id)
+    if not query:
+        await cb.answer("Session User not found in Database!", True)
+        return
     a = str(query.s_chat)
     b = str(query.d_chat)
     c = str(query.from_id)
@@ -68,6 +71,9 @@ async def view_chat_config(client: Bot, cb: CallbackQuery):
 async def delayed_clone(client: Bot, cb: CallbackQuery):
     id = int(cb.from_user.id)
     query = await query_msg(id)
+    if not query:
+        await cb.answer("Session User not found in Database!", True)
+        return
     status = bool(query.delayed_clone)
     if status is True:
         await change_delay(id)
@@ -81,6 +87,9 @@ async def delayed_clone(client: Bot, cb: CallbackQuery):
 async def file_caption(client: Bot, cb: CallbackQuery):
     id = int(cb.from_user.id)
     query = await query_msg(id)
+    if not query:
+        await cb.answer("Session User not found in Database!", True)
+        return
     status = bool(query.caption)
     if id in custom_caption:
         await cb.answer(Presets.CAPTION_ERROR, True)
@@ -98,6 +107,9 @@ async def file_caption(client: Bot, cb: CallbackQuery):
 async def file_name_caption(client: Bot, cb: CallbackQuery):
     id = int(cb.from_user.id)
     query = await query_msg(id)
+    if not query:
+        await cb.answer("Session User not found in Database!", True)
+        return
     status = bool(query.file_caption)
     if id in custom_caption:
         await cb.answer(Presets.CAPTION_ERROR, True)
@@ -205,6 +217,9 @@ async def resume_process(client: Bot, cb: CallbackQuery):
 async def clone(client: Bot, cb: CallbackQuery):
     id = int(cb.from_user.id)
     query = await query_msg(id)
+    if not query:
+        await cb.answer("Session User not found in Database!", True)
+        return
     msg_a = int(query.s_chat)
     msg_b = int(query.d_chat)
     if str(msg_a).startswith('0') or str(msg_b).startswith("0"):

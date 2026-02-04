@@ -36,7 +36,10 @@ async def source_chat_config(client: Bot, cb: CallbackQuery):
     try:
         await cb.answer(Presets.INFO_CHAT_TYPES, True)
         if cb.message:
-            await cb.message.delete()
+            try:
+                await cb.message.delete()
+            except:
+                pass
         msg = await client.send_message(cb.message.chat.id,
                                         Presets.ASK_SOURCE,
                                         parse_mode=ParseMode.HTML,
@@ -45,7 +48,10 @@ async def source_chat_config(client: Bot, cb: CallbackQuery):
         s_chat_msg_id = int(msg.id)
         await source_force_reply(id, s_chat_msg_id)
         await asyncio.sleep(30)
-        await msg.delete()
+        try:
+            await msg.delete()
+        except:
+            pass
     except FloodWait as e:
         await asyncio.sleep(e.value)
         await cb.answer(f"FloodWait: Please wait {e.value} seconds.", show_alert=True)
@@ -56,6 +62,7 @@ async def source_chat_config(client: Bot, cb: CallbackQuery):
         except:
              pass
 
+
 @Client.on_callback_query(filters.regex(r'^target_btn$'))
 async def target_chat_config(client: Bot, cb: CallbackQuery):
     id = int(cb.from_user.id)
@@ -65,7 +72,10 @@ async def target_chat_config(client: Bot, cb: CallbackQuery):
     try:
         await cb.answer(Presets.INFO_CHAT_TYPES, True)
         if cb.message:
-            await cb.message.delete()
+            try:
+                await cb.message.delete()
+            except:
+                pass
         msg = await client.send_message(cb.message.chat.id,
                                         Presets.ASK_DESTINATION,
                                         parse_mode=ParseMode.HTML,
@@ -74,7 +84,10 @@ async def target_chat_config(client: Bot, cb: CallbackQuery):
         d_chat_msg_id = int(msg.id)
         await target_force_reply(id, d_chat_msg_id)
         await asyncio.sleep(30)
-        await msg.delete()
+        try:
+            await msg.delete()
+        except:
+            pass
     except FloodWait as e:
         await asyncio.sleep(e.value)
         await cb.answer(f"FloodWait: Please wait {e.value} seconds.", show_alert=True)
@@ -103,7 +116,10 @@ async def from_msg_config(client: Bot, cb: CallbackQuery):
     await cb.answer(Presets.NOT_REQUIRED)
     try:
         if cb.message:
-            await cb.message.delete()
+            try:
+                await cb.message.delete()
+            except:
+                pass
         msg = await client.send_message(cb.message.chat.id,
                                         Presets.ASK_START_MSG_ID,
                                         parse_mode=ParseMode.HTML,
@@ -112,7 +128,10 @@ async def from_msg_config(client: Bot, cb: CallbackQuery):
         from_msg_id = int(msg.id)
         await from_msg_id_force_reply(id, from_msg_id)
         await asyncio.sleep(30)
-        await msg.delete()
+        try:
+            await msg.delete()
+        except:
+            pass
     except FloodWait as e:
         await asyncio.sleep(e.value)
         await cb.answer(f"FloodWait: Please wait {e.value} seconds.", show_alert=True)
@@ -140,7 +159,10 @@ async def to_msg_config(client: Bot, cb: CallbackQuery):
     await cb.answer(Presets.NOT_REQUIRED)
     try:
         if cb.message:
-            await cb.message.delete()
+            try:
+                await cb.message.delete()
+            except:
+                pass
         msg = await client.send_message(cb.message.chat.id,
                                         Presets.ASK_END_MSG_ID,
                                         parse_mode=ParseMode.HTML,
@@ -149,7 +171,10 @@ async def to_msg_config(client: Bot, cb: CallbackQuery):
         to_msg_id = int(msg.id)
         await to_msg_id_force_reply(id, to_msg_id)
         await asyncio.sleep(30)
-        await msg.delete()
+        try:
+            await msg.delete()
+        except:
+            pass
     except FloodWait as e:
         await asyncio.sleep(e.value)
         await cb.answer(f"FloodWait: Please wait {e.value} seconds.", show_alert=True)

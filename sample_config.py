@@ -26,5 +26,6 @@ class Config(object):
     DB_URI = "Your_database_URI"
 
 
+
 def LOGGER(name: str) -> logging.Logger:
     return logging.getLogger(name)

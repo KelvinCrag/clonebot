@@ -49,9 +49,12 @@ async def source_chat_config(client: Bot, cb: CallbackQuery):
     except FloodWait as e:
         await asyncio.sleep(e.value)
         await cb.answer(f"FloodWait: Please wait {e.value} seconds.", show_alert=True)
-    except Exception:
-        pass
-
+    except Exception as e:
+        print(f"Error in source_chat_config: {e}")
+        try:
+             await cb.answer(f"Error: {e}", show_alert=True)
+        except:
+             pass
 
 @Client.on_callback_query(filters.regex(r'^target_btn$'))
 async def target_chat_config(client: Bot, cb: CallbackQuery):
@@ -75,8 +78,12 @@ async def target_chat_config(client: Bot, cb: CallbackQuery):
     except FloodWait as e:
         await asyncio.sleep(e.value)
         await cb.answer(f"FloodWait: Please wait {e.value} seconds.", show_alert=True)
-    except Exception:
-        pass
+    except Exception as e:
+        print(f"Error in target_chat_config: {e}")
+        try:
+             await cb.answer(f"Error: {e}", show_alert=True)
+        except:
+             pass
 
 
 @Client.on_callback_query(filters.regex(r'^from_btn$'))
@@ -86,6 +93,9 @@ async def from_msg_config(client: Bot, cb: CallbackQuery):
         await cb.answer("Please wait a few seconds before clicking again.", show_alert=True)
         return
     ping = await query_msg(id)
+    if not ping:
+        await cb.answer("Session User not found in Database!", True)
+        return
     query = int(ping.s_chat)
     if not query:
         await cb.answer(Presets.CNF_SOURCE_FIRST, True)
@@ -106,9 +116,12 @@ async def from_msg_config(client: Bot, cb: CallbackQuery):
     except FloodWait as e:
         await asyncio.sleep(e.value)
         await cb.answer(f"FloodWait: Please wait {e.value} seconds.", show_alert=True)
-    except Exception:
-        pass
-
+    except Exception as e:
+        print(f"Error in from_msg_config: {e}")
+        try:
+             await cb.answer(f"Error: {e}", show_alert=True)
+        except:
+             pass
 
 @Client.on_callback_query(filters.regex(r'^up_to_btn$'))
 async def to_msg_config(client: Bot, cb: CallbackQuery):
@@ -117,6 +130,9 @@ async def to_msg_config(client: Bot, cb: CallbackQuery):
         await cb.answer("Please wait a few seconds before clicking again.", show_alert=True)
         return
     ping = await query_msg(id)
+    if not ping:
+        await cb.answer("Session User not found in Database!", True)
+        return
     query = int(ping.s_chat)
     if not query:
         await cb.answer(Presets.CNF_SOURCE_FIRST, True)
@@ -137,8 +153,12 @@ async def to_msg_config(client: Bot, cb: CallbackQuery):
     except FloodWait as e:
         await asyncio.sleep(e.value)
         await cb.answer(f"FloodWait: Please wait {e.value} seconds.", show_alert=True)
-    except Exception:
-        pass
+    except Exception as e:
+        print(f"Error in to_msg_config: {e}")
+        try:
+             await cb.answer(f"Error: {e}", show_alert=True)
+        except:
+             pass
 
 
 @Client.on_callback_query(filters.regex(r'^types_btn$'))

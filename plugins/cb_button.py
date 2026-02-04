@@ -14,8 +14,10 @@ from plugins.commands import reply_markup_home
 from plugins.index_files import index_target_chat, purge_media
 from library.buttons import reply_markup_stop, reply_markup_resume
 
+from config import Config
 @Client.on_callback_query(filters.regex(r'^start_btn$'))
 async def start_settings(client: Bot, cb: CallbackQuery):
+
     user = await Bot.get_me(self=client.USER)
     id = int(cb.from_user.id)
     if id != int(user.id):

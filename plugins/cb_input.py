@@ -189,7 +189,15 @@ async def to_msg_config(client: Bot, cb: CallbackQuery):
 @Client.on_callback_query(filters.regex(r'^types_btn$'))
 async def set_types(client: Bot, cb: CallbackQuery):
     await cb.answer()
-    await cb.message.edit_text(Presets.SELECT_TYPE, reply_markup=InlineKeyboardMarkup(opt_type_btns))
+    try:
+        await cb.message.edit_text(Presets.SELECT_TYPE, reply_markup=InlineKeyboardMarkup(opt_type_btns))
+    except FloodWait as e:
+        await cb.answer(f"⚠️ FloodWait: Sleeping for {e.value}s...", show_alert=True)
+        await asyncio.sleep(e.value)
+        try:
+            await cb.message.edit_text(Presets.SELECT_TYPE, reply_markup=InlineKeyboardMarkup(opt_type_btns))
+        except Exception as err:
+            await cb.answer(f"Error after wait: {err}", show_alert=True)
 
 
 @Client.on_callback_query(filters.regex(regex_pattern))
@@ -245,6 +253,13 @@ async def file_types_select(_, cb: CallbackQuery):
         opt_type_btns[1][2] = InlineKeyboardButton("Text ✅", callback_data="text_yes_btn")
     try:
         await cb.message.edit_text(text, reply_markup=InlineKeyboardMarkup(opt_type_btns))
+    except FloodWait as e:
+        await cb.answer(f"⚠️ FloodWait: Sleeping for {e.value}s...", show_alert=True)
+        await asyncio.sleep(e.value)
+        try:
+            await cb.message.edit_text(text, reply_markup=InlineKeyboardMarkup(opt_type_btns))
+        except Exception as err:
+            await cb.answer(f"Error after wait: {err}", show_alert=True)
     except Exception:
         pass
 

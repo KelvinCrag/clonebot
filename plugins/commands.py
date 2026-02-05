@@ -101,7 +101,14 @@ async def force_reply_msg(client: Bot, message: Message):
             try:
                 chat_status = await client.USER.get_chat(chat_info)
             except FloodWait as e:
+                await bot_msg.edit(f"⚠️ FloodWait: Sleeping for {e.value}s...")
                 await asyncio.sleep(e.value)
+                # Retry fetching after wait
+                try:
+                    chat_status = await client.USER.get_chat(chat_info)
+                except Exception as err:
+                     await bot_msg.edit(f"Error after wait: {err}")
+                     return
             except Exception:
                 await client.delete_messages(message.chat.id, a)
                 await message.delete()
@@ -143,7 +150,14 @@ async def force_reply_msg(client: Bot, message: Message):
             try:
                 chat_status = await client.USER.get_chat(chat_info)
             except FloodWait as e:
+                await bot_msg.edit(f"⚠️ FloodWait: Sleeping for {e.value}s...")
                 await asyncio.sleep(e.value)
+                # Retry fetching after wait
+                try:
+                    chat_status = await client.USER.get_chat(chat_info)
+                except Exception as err:
+                     await bot_msg.edit(f"Error after wait: {err}")
+                     return
             except Exception:
                 await bot_msg.edit(Presets.USER_ABSENT_MSG)
                 await client.delete_messages(message.chat.id, b)
@@ -165,8 +179,8 @@ async def force_reply_msg(client: Bot, message: Message):
             except Exception:
                 pass
             member = await client.USER.get_chat_member(chat_id, user_bot_me.id)
-            if str(await get_chat_type(chat_status)) in ('SUPERGROUP' or 'GROUP'):
-                if str(await get_chat_member_status(member)) not in ('ADMINISTRATOR' or 'OWNER'):
+            if str(await get_chat_type(chat_status)) in ('SUPERGROUP', 'GROUP'):
+                if str(await get_chat_member_status(member)) not in ('ADMINISTRATOR', 'OWNER'):
                     await client.delete_messages(message.chat.id, b)
                     await message.delete()
                     await bot_msg.edit(Presets.IN_CORRECT_PERMISSIONS_MESSAGE_DEST_POSTING)

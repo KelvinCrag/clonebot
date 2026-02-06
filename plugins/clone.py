@@ -129,30 +129,80 @@ async def clone_medias(bot: Bot, m: Message):
                         pass
                     for file_type in file_types:
                         media = getattr(messages, file_type, None)
-                            if media is not None:
-                                uid = str(media.file_unique_id) if hasattr(media, 'file_unique_id') else None
-                                # If the duplicate file id is found while cloning operation
-                                if (uid is not None) and (uid in master_index):
-                                    matching += 1
-                                # if the duplicate file is not found while cloning
-                                else:
-                                    if uid is not None:
-                                        master_index.append(uid) # The unique id of the file is added to the master index list
-                                if file_type == 'document': doc += 1; file_name = messages.document.file_name
-                                elif file_type == 'video': video += 1; file_name = messages.video.file_name
-                                elif file_type == 'audio': audio += 1; file_name = messages.audio.file_name
-                                elif file_type == "voice": voice += 1; file_name = messages.caption
-                                elif file_type == "photo": photo += 1; file_name = messages.caption
-                                elif file_type == "text": text += 1; file_name = str()
-                                else: pass
-                                
-                                if not file_name:
-                                    file_name = getattr(messages, "caption", str()) or str()
+                        if media is not None:
+                            uid = str(media.file_unique_id) if hasattr(media, 'file_unique_id') else None
+                            
+                            # Extract Filename Logic
+                            file_name = str()
+                            if file_type == 'document': file_name = messages.document.file_name
+                            elif file_type == 'video': file_name = messages.video.file_name
+                            elif file_type == 'audio': file_name = messages.audio.file_name
+                            elif file_type == "voice": file_name = messages.caption
+                            elif file_type == "photo": file_name = messages.caption
+                            elif file_type == "text": file_name = str()
+                            
+                            if not file_name:
+                                file_name = getattr(messages, "caption", str()) or str()
 
-                                # Truncate long filenames for display
-                                if len(file_name) > 60:
-                                    file_name = file_name[:57] + "..."
-                                #
+                            if len(file_name) > 60:
+                                file_name = file_name[:57] + "..."
+
+                            is_duplicate = False
+                            # Duplicate Check
+                            if (uid is not None) and (uid in master_index):
+                                matching += 1
+                                is_duplicate = True
+                            else:
+                                if uid is not None:
+                                    master_index.append(uid)
+                                # Increment counters
+                                if file_type == 'document': doc += 1
+                                elif file_type == 'video': video += 1
+                                elif file_type == 'audio': audio += 1
+                                elif file_type == "voice": voice += 1
+                                elif file_type == "photo": photo += 1
+                                elif file_type == "text": text += 1
+
+                            # Status Update (Common)
+                            total_copied = doc + video + audio + voice + photo + text
+                            pct = await calc_percentage(sp, ep, msg_id)
+                            update_time = datetime.now(pytz.timezone('Asia/Kolkata')).strftime('%I:%M %p')
+                            try:
+                                await m.edit(
+                                    Presets.MESSAGE_COUNT.format(
+                                        int(msg_id),
+                                        int(total_copied),
+                                        trunc(pct) if pct <= 100 else "- ",
+                                        days,
+                                        hours,
+                                        clone_start_time,
+                                        update_time,
+                                        matching,
+                                        file_name
+                                    ),
+                                    parse_mode=ParseMode.HTML,
+                                    disable_web_page_preview=True
+                                )
+                            except FloodWait as e:
+                                await asyncio.sleep(e.value)
+                            except Exception:
+                                pass
+                            
+                            # Progress Bar Update (Common)
+                            progress = await calc_progress(pct)
+                            try:
+                                if id in clone_pause_key:
+                                    reply_markup = reply_markup_resume
+                                else:
+                                    reply_markup = reply_markup_stop
+                                await msg.edit("🇮🇳 | " + progress if pct <= 100 else Presets.BLOCK,
+                                               reply_markup=reply_markup)
+                            except Exception:
+                                pass
+                            
+                            # Copy Action (Only if not duplicate)
+                            if not is_duplicate:
+                                # Caption Logic
                                 if (file_type != "text") and (id in custom_caption):
                                     caption = custom_caption[id]
                                 elif bool(default_caption):
@@ -164,31 +214,7 @@ async def clone_medias(bot: Bot, m: Message):
                                         caption = str()
                                 else:
                                     caption = str()
-                                #
-                                total_copied = doc + video + audio + voice + photo + text
-                                pct = await calc_percentage(sp, ep, msg_id)
-                                update_time = datetime.now(pytz.timezone('Asia/Kolkata')).strftime('%I:%M %p')
-                                try:
-                                    await m.edit(
-                                        Presets.MESSAGE_COUNT.format(
-                                            int(msg_id),
-                                            int(total_copied),
-                                            trunc(pct) if pct <= 100 else "- ",
-                                            days,
-                                            hours,
-                                            clone_start_time,
-                                            update_time,
-                                            matching,
-                                            file_name
-                                        ),
-                                        parse_mode=ParseMode.HTML,
-                                        disable_web_page_preview=True
-                                    )
-                                except FloodWait as e:
-                                    await asyncio.sleep(e.value)
-                                except Exception:
-                                    pass
-                                progress = await calc_progress(pct)
+
                                 try:
                                     await bot.USER.copy_message(
                                         chat_id=target_chat,
@@ -210,17 +236,10 @@ async def clone_medias(bot: Bot, m: Message):
                                         await m.delete()
                                     clone_cancel_key.pop(id, None)
                                     return
-                                try:
-                                    if id in clone_pause_key:
-                                        reply_markup = reply_markup_resume
-                                    else:
-                                        reply_markup = reply_markup_stop
-                                    await msg.edit("🇮🇳 | " + progress if pct <= 100 else Presets.BLOCK,
-                                                   reply_markup=reply_markup)
-                                except Exception:
-                                    pass
+
                                 await asyncio.sleep(delay)
-                                # If the end id is reached, the clone operation will be aborted and the report is generated
+
+                                # Termination Check
                                 if end_id and (int(msg_id) >= end_id):
                                     if not int(total_copied):
                                         await m.delete()
@@ -230,8 +249,6 @@ async def clone_medias(bot: Bot, m: Message):
                                     await set_to_defaults(id)
                                     clone_cancel_key.pop(id, None)
                                     return
-                                else:
-                                    pass
                         else:
                             pass
                 else:

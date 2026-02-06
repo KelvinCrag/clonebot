@@ -65,7 +65,10 @@ async def index_target_chat(client: Bot, message: Message):
                     pct = await calc_percentage(int(), last_msg_id, new_msg_id)
                     media = getattr(messages, file_type, None)
                     if media is not None:
-                        uid = str(media.file_unique_id)
+                        try:
+                            uid = str(media.file_unique_id)
+                        except AttributeError:
+                            uid = None
                         if uid not in master_index:
                             master_index.append(uid)
                         else:

@@ -130,9 +130,11 @@ async def clone_medias(bot: Bot, m: Message):
                     for file_type in file_types:
                         media = getattr(messages, file_type, None)
                         if media is not None:
-                            uid = None
-                            if not isinstance(media, str):
-                                uid = str(media.file_unique_id) if hasattr(media, 'file_unique_id') else None
+                        if media is not None:
+                            try:
+                                uid = str(media.file_unique_id)
+                            except AttributeError:
+                                uid = None
                             
                             # Extract Filename Logic
                             file_name = str()

@@ -11,7 +11,9 @@ class Presets(object):
 ├ Progress - {} %
 ├ Time taken - {} {}
 ├ Clone started - {}
-├ Last updated  - {}</code>
+├ Last updated  - {}
+├ Duplicates - {}
+├ File - {}</code>
 ├  🔰 <a href='t.me/RMProjects'><b>@RMProjects</b></a> || 🏅 <a href='https://github.com/m4mallu/clonebot-ui'><b>@Github</b></a>
 ╰──────⌈ 💢 Clonebot ⌋─────╯"""
     DUPLICATE_INDEX = """

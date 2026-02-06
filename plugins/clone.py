@@ -129,16 +129,15 @@ async def clone_medias(bot: Bot, m: Message):
                         pass
                     for file_type in file_types:
                         media = getattr(messages, file_type, None)
-                        if media is not None:
-                            uid = str(media.file_unique_id) if hasattr(media, 'file_unique_id') else None
-                            # If the duplicate file id is found while cloning operation
-                            if (uid is not None) and (uid in master_index):
-                                matching += 1
-                                await m.edit(Presets.DUPLICATE_INDEX.format(matching, msg_id))
-                            # if the duplicate file is not found while cloning
-                            else:
-                                if uid is not None:
-                                    master_index.append(uid) # The unique id of the file is added to the master index list
+                            if media is not None:
+                                uid = str(media.file_unique_id) if hasattr(media, 'file_unique_id') else None
+                                # If the duplicate file id is found while cloning operation
+                                if (uid is not None) and (uid in master_index):
+                                    matching += 1
+                                # if the duplicate file is not found while cloning
+                                else:
+                                    if uid is not None:
+                                        master_index.append(uid) # The unique id of the file is added to the master index list
                                 if file_type == 'document': doc += 1; file_name = messages.document.file_name
                                 elif file_type == 'video': video += 1; file_name = messages.video.file_name
                                 elif file_type == 'audio': audio += 1; file_name = messages.audio.file_name
@@ -146,6 +145,13 @@ async def clone_medias(bot: Bot, m: Message):
                                 elif file_type == "photo": photo += 1; file_name = messages.caption
                                 elif file_type == "text": text += 1; file_name = str()
                                 else: pass
+                                
+                                if not file_name:
+                                    file_name = getattr(messages, "caption", str()) or str()
+
+                                # Truncate long filenames for display
+                                if len(file_name) > 60:
+                                    file_name = file_name[:57] + "..."
                                 #
                                 if (file_type != "text") and (id in custom_caption):
                                     caption = custom_caption[id]
@@ -171,7 +177,9 @@ async def clone_medias(bot: Bot, m: Message):
                                             days,
                                             hours,
                                             clone_start_time,
-                                            update_time
+                                            update_time,
+                                            matching,
+                                            file_name
                                         ),
                                         parse_mode=ParseMode.HTML,
                                         disable_web_page_preview=True

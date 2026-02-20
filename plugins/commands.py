@@ -14,6 +14,18 @@ from library.buttons import (reply_markup_start, reply_markup_home, reply_markup
                              reply_markup_cap_cnf, reply_markup_terminate)
 
 
+async def resolve_chat_fallback(user_client: Client, chat_info):
+    try:
+        return await user_client.get_chat(chat_info)
+    except Exception as e:
+        if isinstance(chat_info, int):
+            # Fallback for integer IDs when peer is not cached
+            async for dialog in user_client.get_dialogs():
+                if dialog.chat.id == chat_info:
+                    return dialog.chat
+        raise e
+
+
 time_now = datetime.datetime.now(pytz.timezone('Asia/Kolkata')).strftime('%I:%M:%S %p')
 start_date = datetime.datetime.now(pytz.timezone('Asia/Kolkata')).date()
 
@@ -99,13 +111,13 @@ async def force_reply_msg(client: Bot, message: Message):
     try:
         if message.reply_to_message_id == a:
             try:
-                chat_status = await client.USER.get_chat(chat_info)
+                chat_status = await resolve_chat_fallback(client.USER, chat_info)
             except FloodWait as e:
                 await bot_msg.edit(f"⚠️ FloodWait: Sleeping for {e.value}s...")
                 await asyncio.sleep(e.value)
                 # Retry fetching after wait
                 try:
-                    chat_status = await client.USER.get_chat(chat_info)
+                    chat_status = await resolve_chat_fallback(client.USER, chat_info)
                 except Exception as err:
                      await bot_msg.edit(f"Error after wait: {err}")
                      return
@@ -148,13 +160,13 @@ async def force_reply_msg(client: Bot, message: Message):
         elif message.reply_to_message_id == b:
             await asyncio.sleep(1)
             try:
-                chat_status = await client.USER.get_chat(chat_info)
+                chat_status = await resolve_chat_fallback(client.USER, chat_info)
             except FloodWait as e:
                 await bot_msg.edit(f"⚠️ FloodWait: Sleeping for {e.value}s...")
                 await asyncio.sleep(e.value)
                 # Retry fetching after wait
                 try:
-                    chat_status = await client.USER.get_chat(chat_info)
+                    chat_status = await resolve_chat_fallback(client.USER, chat_info)
                 except Exception as err:
                      await bot_msg.edit(f"Error after wait: {err}")
                      return
